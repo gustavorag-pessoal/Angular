@@ -22,7 +22,7 @@
 	position: fixed;
 	background-color: #180000;
 	border: 1px solid #CCC;
-	width: 12%; 
+	width: 180px; 
     height: 100%;
 }
 
@@ -31,12 +31,13 @@
 	font-weight: bold;
 }
 
-.header{
+.header {
 	margin-top: 1%;
     height: 20%;
 }
 
 .content{
+	padding:5px;
 	margin-top: 11%;
     height: 60%;
 
@@ -47,11 +48,13 @@
 }
 
 .content-title{
+	padding:5px;
 	border: 1px solid #CCC;
 	margin-top: 1px;
 	margin-left: 1px;
-	width: 20%; 
-	height: 10%;
+	margin-bottom: 1px;
+	width: 15%; 
+	height: 5%;
 	background-color: #F8F8F8;
 	text-align: center;
 }
@@ -71,4 +74,11 @@
 	line-height: 50px;
 	text-align: center;
 	vertical-align: middle;
+}
+
+.table {
+	position:relative;
+	margin-left: 1px;
+	height: 80%;
+	border: 1px solid #CCC;
 }

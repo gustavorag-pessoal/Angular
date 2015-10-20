@@ -7,7 +7,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Dashboard Template</title>
     <script src="./lib/angular/angular.min.js"></script>
-	<script src="./controllers/eventController.js"></script>
+    <script src="./controllers/eventController.js"></script>
     <script src="./lib/jquery/jquery-1.11.3.min.js"></script>
     <script src="./css/bootstrap/js/bootstrap.min.js"></script>
     <!-- App Css -->
@@ -30,11 +30,16 @@
 	    	<p><span class="glyphicon glyphicon-rounded glyphicon-play iconButton red" ng-click="getEvents()"></p>
 	    	<p class="leffBarItem"> Start Monitoring </p>
 	    	<p class="leffBarItem"> ... </p>
+
+        <p><span class="glyphicon glyphicon-rounded glyphicon-repeat iconButton red" ng-click="autoUpdateButtonClick()"></p>
+        <p class="leffBarItem"> {{isStop ? 'Start AutoUpdate' : 'Stop AutoUpdate'}} </p>
+        <p class="leffBarItem"> ... </p>
+
 	    </div>
 	    <div id='content' class="content">
 	    	<div class="content-title"> Monitorin Events - 
 	    		<span ng-click="getEvents()" class="glyphicon glyphicon-refresh iconButton"/></div>
-	    	<div>
+	    	<div style="float:left">
 	    		<table class="table table-striped">
   					<tr>
   						<td>...</td><td>DATE</td><td>TYPE</td><td>MESSAGE</td>
@@ -44,6 +49,19 @@
   					</tr>
 				</table>
 	    	</div>
+
+        <div style="float:left; margin-left:10px;">
+          <table class="table table-striped">
+            <tr>
+              <td>TYPE</td><td>LOGS</td>
+            </tr>
+            <tr ng-repeat="et in eventTypes">
+              <td>EVENT : [{{et.type}}]</td><td><p ng-repeat="ev in et.events">[{{ ev.date}}] -- {{ev.description }}</p></td>
+
+            </tr>
+          </table>
+        </div>
+
 	    </div>
 	    <div id='footer' class="footer">
 	    </div>

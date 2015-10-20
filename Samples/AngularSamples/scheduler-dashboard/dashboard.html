@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en" ng-app="schedulerDashboard">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+    <div class="container-fluid" ng-controller='MonitorController'>
+      <div class="row">
+          <div class="topBar navbar navbar-inverse">
+           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#minMenu" aria-expanded="false" aria-controls="minMenu">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+          <div id="minMenu" class="minMenu collapse">
+            <p><span class="glyphicon glyphicon-rounded glyphicon-play iconButton gold" ng-click="getSebalImages()"></p>
+            <p class="leffBarItem"> ... </p>
+
+          </div>
+          <div class="col-sx-3 col-sm-2 col-md-1 sidebar">
+            <p><span class="glyphicon glyphicon-rounded glyphicon-play iconButton gold" ng-click="getSebalImages()"></p>
+            <p class="leffBarItem"> Start Monitoring </p>
+            <p class="leffBarItem"> ... </p>
+          </div>
+          
+        <div class="col-sm-9 col-sm-offset-2 col-md-10 col-md-offset-1 main">
+            <h1 class="page-header">Sebal Imagens</h1>
+            
+            <div class="table-responsive" ng-controller="PaginationController">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th>#</th><th>Name</th><th>State</th><th>Member</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="i in sebalImages | offset: currentPage*itemsPerPage | limitTo: itemsPerPage" ng-click="getTaskForImage(i.name)">
+                        <td>{{$index + 1}}</td><td class="selectable">[{{i.name}}]</td><td>{{ i.state.value}}</td><td>{{i.federationMember }}</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                    <td bgcolor="gray" colspan="2" align="right">
+                    <div class="dropdown" >
+                        <button class="btn btn-default dropdown-toggle" ng-model="itemsPerPage"
+                            type="button" id="itensPerPageSelectId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Itens per Page
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="itensPerPageSelectId">
+                          <li ng-repeat="option in itemsPerPageOptions" <a href ng-click="selectItensPerPage(option)">{{option}}</a></li>
+                        </ul>
+                    </div>  
+                    </td>
+                    <td bgcolor="blue" colspan="2">
+                        <ul class="pagination" ng-if='pageCount() > 0' style="display:inline!important;">
+                        <li ng-if='!prevPageDisabled'>
+                          <a href ng-click="prevPage()">
+                            <span >&laquo;</span>
+                          </a>
+                        </li>
+                        <li ng-repeat="n in getPages()" ng-click="setPage(n-1)"><a href >{{n}}</a></li>
+                        <li ng-if='!nextPageDisabled'>
+                          <a href ng-click="nextPage()">
+                            <span>&raquo;</span>
+                          </a>
+                        </li>
+                        </ul>
+                    </td>  
+                    </tfoot>
+                </table>
+                    
+                  
+            </div>
+
+          <h2 class="sub-header">Tasks monitor</h2>
+            <div id="taskMonitorContent">
+                <div class="monitorItem" ng-repeat="taskState in tasksStates"> 
+                   <h2>{{taskState.state}}</h2>
+                    <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                            <th>#</th>
+                            <th>Task ID</th>
+                            <th>Resource ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="task in taskState.tasks" class="fontSlightlySmall">
+                                <td width="2%">{{$index + 1}}</td>
+                                <td width="46%">{{task.taskId}}</td>
+                                <td width="52%">{{task.resourceId}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    
+
+    <script src="./lib/angular/angular.min.js"></script>
+    <script src="./lib/angular/angular-resource.min.js"></script>
+    <script src="./lib/jquery/jquery.js"></script>
+    <script src="./lib/smart-table/smart-table.min.js"></script>
+    <script src="dashboardApp.js"></script>
+    <script src="./controllers/dashboardControllers.js"></script>
+    <script src="./services/dashboardServices.js"></script>
+    <script src="./css/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
