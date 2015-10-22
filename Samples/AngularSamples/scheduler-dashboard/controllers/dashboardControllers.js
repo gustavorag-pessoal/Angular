@@ -6,49 +6,86 @@ dashboardControllers.controller('MonitorController', function($scope, $log, $fil
 	$scope.tasksStates = [];
   $scope.sebalImages = [];
   $scope.tasks = [];
-  $scope.itemsByPage = 5;
+  $scope.error = '';
+  $scope.actualImage = '';
+  $scope.warningTasks = false;
 
 
   $scope.getSebalImages = function() {
-      $log.debug('Controller getting images into scope.sebalImages');
-      SebalImagesResource.query(function(data) {
-          $log.debug('Images: '+JSON.stringify(data));
-          $scope.sebalImages = data;
-          $scope.paginationItems = $scope.sebalImages;
-      }); 
+      $scope.isStarted = true;
+      $log.info('Getting images into scope.sebalImages');
+      SebalImagesResource.query(
+          function(data) {
+              $log.debug('Images: '+JSON.stringify(data));
+              $scope.sebalImages = $filter('orderBy')(data, ['priority', 'name']);
+              $scope.paginationItems = $scope.sebalImages;
+          },
+          function(error){
+              $log.error('Error while trying to load images from Sebal Scheduler. Erro:'+error);
+              $scope.error = 'Error while trying to load images from Sebal Scheduler. Erro:'+error;
+          }
+      ); 
+
+      //Call with promisse exemple  
+      //var imagesReturned = SebalImagesResource.query();
+      //
+      //imagesReturned.$promisse.then(function(result) {
+      // 
+      //    $log.debug('Images: '+JSON.stringify(data));
+      //    $scope.sebalImages = data;
+      //    $scope.paginationItems = $scope.sebalImages;
+      //}); 
+
   };
 
   $scope.getTaskForImage = function(imageName) {
 
-      $log.debug("Getting tasks for :"+imageName);
+      $log.info("Getting tasks for :"+imageName);
+
+      $scope.actualImage = imageName;
+
       TaskResource.get({ image: imageName }, function(data) {
           $scope.tasksStates = []; //Restart
           $scope.tasks = data;
+          $log.debug(JSON.stringify(data));
+         // if($scope.tasks.length > 0){
+            $scope.warningTasks = false;
+            angular.forEach($scope.tasks, function(value, key) {
 
-          angular.forEach($scope.tasks, function(value, key) {
+                //new event
+                var temp_task = {taskId : value.taskId , resourceId: value.resourceId };
 
-              //new event
-              var temp_task = {taskId : value.taskId , resourceId: value.resourceId };
+                var imageTaskState = $filter('filter')($scope.tasksStates, function (d) {return d.state === value.state;})[0];
+                
+                if(!angular.isDefined(imageTaskState)){
+                  $log.debug('Add New Task Type: '+value.state);
+                  var temp_tasksByState = [];
+                  imageTaskState = {state: value.state, tasks: temp_tasksByState}
 
-              var imageTaskState = $filter('filter')($scope.tasksStates, function (d) {return d.state === value.state;})[0];
-              
-              if(!angular.isDefined(imageTaskState)){
-                $log.debug('Add New Task Type: '+value.state);
-                var temp_tasksByState = [];
-                imageTaskState = {state: value.state, tasks: temp_tasksByState}
+                  $scope.tasksStates.push(imageTaskState);
 
-                $scope.tasksStates.push(imageTaskState);
+                  $log.debug('Add new Task State:'+JSON.stringify(imageTaskState));
+                }
 
-                $log.debug('Add new Task State:'+JSON.stringify(imageTaskState));
-              }
+                $log.debug('Add New Task: '+JSON.stringify(temp_task));
+                imageTaskState.tasks.push(temp_task);
+            });
+          // }else{
+          //   $scope.warningTasks = true;
+          // }
 
-              $log.debug('Add New Task: '+JSON.stringify(temp_task));
-              imageTaskState.tasks.push(temp_task);
-          });
       });
   };
 
+  $scope.refreshTasks = function() {
+      if(angular.isDefined($scope.actualImage)){
+        $scope.getTaskForImage($scope.actualImage);
+      }
+  }
+
 });
+
+
 
 app.filter('offset', function() {
   return function(input, start) {
@@ -57,10 +94,10 @@ app.filter('offset', function() {
   };
 });
 
-dashboardControllers.controller("PaginationController", function($scope, $log) {
+dashboardControllers.controller("PaginationController", function($scope) {
 
-  $scope.itemsPerPage = 5;
-  $scope.itemsPerPageOptions = [5, 8, 10, 15, 20];
+  $scope.itemsPerPage = 50;
+  $scope.itemsPerPageOptions = [10, 15, 20, 50];
   $scope.currentPage = 0;
   $scope.prevPageDisabled = true;
   $scope.nextPageDisabled = true;
@@ -92,7 +129,6 @@ dashboardControllers.controller("PaginationController", function($scope, $log) {
   };
 
   $scope.setPage = function(n) {
-    $log.debug('Setting page:'+n);
     $scope.currentPage = n;
     prevPageCheck();
     nextPageCheck();
@@ -106,7 +142,6 @@ dashboardControllers.controller("PaginationController", function($scope, $log) {
   };
 
   $scope.selectItensPerPage = function(n){
-    $log.debug('Setting number of itens:'+n);  
     $scope.itemsPerPage = n;
   };
 
@@ -116,7 +151,6 @@ dashboardControllers.controller("PaginationController", function($scope, $log) {
     }else{
         $scope.prevPageDisabled = false;
     }
-    $log.debug('PrevPage:'+$scope.prevPageDisabled);
   }
 
   function nextPageCheck(){
@@ -125,7 +159,6 @@ dashboardControllers.controller("PaginationController", function($scope, $log) {
     }else{
         $scope.nextPageDisabled = false;
     }
-    $log.debug('NextPage:'+$scope.nextPageDisabled);
   }
   
 

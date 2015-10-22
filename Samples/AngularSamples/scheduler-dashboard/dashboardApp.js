@@ -1,7 +1,14 @@
 var app = angular.module('schedulerDashboard', [
 	'dashboardControllers',
 	'dashboardServices'
-]);
+]).config(function($logProvider){
+  $logProvider.debugEnabled(false);
+}).constant("appConfig", {
+	"urlSebalSchedulerService":"http://10.10.0.20:8687/sebal-scheduler/",
+	"imagesServicePath":"images",
+	"tasksServicePath":"tasks/:image"
+}
+);
 
 
 //Template for Angular code organization

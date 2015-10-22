@@ -1,15 +1,25 @@
 var dashboardServices = angular.module('dashboardServices', ['ngResource']);
 
-
-dashboardServices.factory('SebalImagesResource', function($resource) {
-  return $resource('http://localhost:9192/images');
+dashboardServices.factory('SebalImagesResource', function($log, $resource, appConfig) {
+	var resourceUrl = appConfig.urlSebalSchedulerService+appConfig.imagesServicePath;
+	$log.info("Creating resource to Sebal Image : "+resourceUrl);
+  	return $resource(resourceUrl);
+  	// return $resource('http://localhost:9192/images');
 });
 
-dashboardServices.service('TaskResource', function($resource) {
-  return $resource("http://localhost:9192/tasks/:image", {}, {
-    get: { method: "GET", isArray: true }
-  });
+dashboardServices.service('TaskResource', function($log, $resource, appConfig) {
+	// return $resource("http://localhost:9192/tasks/:image", {}, {
+	// get: { method: "GET", isArray: true }
+	// });
+	var resourceUrl = appConfig.urlSebalSchedulerService+appConfig.tasksServicePath;
+	$log.info("Creating resource to Sebal Tasks : "+resourceUrl);
+	return $resource(resourceUrl, {}, {
+	get: { method: "GET", isArray: true }
+	});
 });
+
+
+
 
 
 //Using HTTP.get
